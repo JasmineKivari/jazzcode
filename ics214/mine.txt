@@ -1,0 +1,114 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "messageService.h"
+
+static LinkType blocksHead; // Circular queue index for first available block
+static LinkType blocksTail; // Circular queue index for last available block
+static LinkType blocksFree[N_MESSAGE_BLOCKS]; // Free list is a circular queue
+
+// For each block, the link to the next block (-1 indicates no next block)
+static LinkType links[N_MESSAGE_BLOCKS];
+static char messageBlocks[N_MESSAGE_BLOCKS][MESSAGE_BLOCK_SIZE]; // Current number of free blocks
+static char messageBlocksInitialized = 0;
+static int blocksAvailable;
+
+static LinkType getBlock(){
+    if (blocksAvailable <= 0) {
+        return -1;
+    }
+    LinkType block = blocksFree[blocksHead];
+    blocksHead = (++blocksHead) & N_MESSAGE_BLOCKS_MASK;
+    --blocksAvailable;
+    return block;
+}
+
+
+Message createMessage(const char *myMessage, const int nBytes){
+     if (!messageBlocksInitialized) {
+        initializeMessageBlocks();
+    }
+    Message retVal;
+    retVal.nBytes = nBytes;
+
+    // Division by a power of 2 is simply a shift
+    int blocksNeeded = nBytes >> (MESSAGE_BLOCK_BITS);
+    // Need one more if there is a remainder
+    if (nBytes & MESSAGE_BLOCK_MASK) {
+        ++blocksNeeded;
+    }
+
+    if (blocksNeeded > blocksAvailable) {
+        retVal.nBytes = -1;   // Mark as invalid Message
+        return retVal;
+    }
+    
+    LinkType firstBlock = getBlock();
+    LinkType thisBlock = firstBlock;
+    retVal.firstBlock = firstBlock;
+
+    DPRINT("Need %d. Using blocks: %d", blocksNeeded, firstBlock);
+// Go into a loop to copy data into each block and link the blocks
+    int theLastBite = nBytes;
+    
+    for ( int i = 1; i < blocksNeeded; i++) {
+        memcpy(messageBlocks[thisBlock], myMessage, MESSAGE_BLOCK_SIZE);
+        theLastBite -= MESSAGE_BLOCK_SIZE;
+        myMessage += MESSAGE_BLOCK_SIZE;
+        LinkType NectBlocko = getBlock();
+        DPRINT("%d ", NectBlocko);
+        links[thisBlock] = NectBlocko;
+        thisBlock = NectBlocko;
+    }
+    memcpy(messageBlocks[thisBlock], myMessage, theLastBite);
+    links[thisBlock] = -1;
+    DPRINT("\n");
+    
+    return retVal;
+}
+
+void freeMessage(Message message){
+    
+    LinkType thisBlock = message.firstBlock;
+    while (thisBlock != -1) {
+        blocksTail = ++blocksTail & N_MESSAGE_BLOCKS_MASK;
+        DPRINT ("Freeing blocks: %d blockTail %d\n", thisBlock, blocksTail);
+        //DPRINT ("blockTail %d\n", blocksTail);
+        blocksFree[blocksTail] = thisBlock;
+        ++blocksAvailable;
+        thisBlock = links[thisBlock];
+    }
+}
+
+
+void initializeMessageBlocks(void){
+    
+for (int k = 0; k < N_MESSAGE_BLOCKS; k++) {
+        blocksFree[k] = k;
+    }
+    blocksHead = 0;
+    blocksTail = N_MESSAGE_BLOCKS - 1;
+    blocksAvailable = N_MESSAGE_BLOCKS;
+    messageBlocksInitialized = 1;  
+}
+
+int numberOfFreeBuffers(void){
+    return blocksAvailable;
+}
+
+void printMessage(FILE *stream, const Message message){
+LinkType thisBlock = message.firstBlock;
+int nBytes = message.nBytes;
+while (thisBlock >= 0){
+    int n = (nBytes >= MESSAGE_BLOCK_SIZE) ? MESSAGE_BLOCK_SIZE : nBytes;
+    fwrite(messageBlocks[thisBlock], 1, n, stream);
+    nBytes -= n;
+    thisBlock = links[thisBlock];
+    }
+}
+
