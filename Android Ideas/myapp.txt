@@ -1,0 +1,114 @@
+package ca.camosun.translator;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    private static String nA = "Please enter a word!";
+    private ArrayList<Translations> TranslateLangs;
+    private Lambda Romanji;
+    private Lambda English;
+
+    private class Translations {
+        private String languageName;
+        private String translateButtonLabel;
+        private Lambda Romanji;
+        private Lambda English;
+
+        // Takes the variables from the Translations class and controls access to it.
+        private Translations(String languagelName, String translateButtonLabel, Lambda Romanji, Lambda English) {
+
+            this.languageName = languagelName;
+            this.translateButtonLabel = translateButtonLabel;
+            this.Romanji = Romanji;
+            this.English = English;
+
+        }
+    }
+
+    public interface Lambda {
+        String translateText(String input);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        TranslateLangs = new ArrayList<>();
+        TranslateLangs.add(new Translations("Romanji", "Translate", (ra) -> ra = "Ichi", (en) -> en = "One"));
+        TranslateLangs.add(new Translations("English", "Translate", (en) -> en, (ra) -> ra));
+
+        ArrayList<String> spinnerValues = new ArrayList<>();
+        for (Translations conversion : TranslateLangs) {
+            spinnerValues.add(conversion.languageName);
+        }
+
+        ArrayAdapter<String> adapter;
+        adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_dropdown_item, spinnerValues);
+        Spinner spinner = findViewById(R.id.languageSelector);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
+        Button button = findViewById(R.id.translateButton);
+        button.setText(TranslateLangs.get(0).translateButtonLabel);
+
+    }
+
+    public void button(View view) {
+        EditText translatorField;
+        translatorField= (EditText) findViewById(R.id.translatorField);
+        String word = translatorField.getText().toString();
+        // This is if field is not null then render the text
+        try {
+            if (Romanji != null) {
+
+                translatorField.setText(String.valueOf(Romanji.translateText(word)));
+            }
+            // This is is the field is empty while the user clicks on the button it will let the user know
+            //to please input a number.
+        } catch (Exception e) {
+            translatorField.setText(nA);
+        }
+    }
+
+    /*
+    This is when the adapterView contains no selected item
+    When the left or right buttons are clicks a message pops up to let
+    the user know that nothing was selected.
+     */
+    public void onNothingSelected(AdapterView<?> parent) {
+        Button button = findViewById(R.id.translateButton);
+        button.setText(nA);
+
+        Romanji = null;
+        English = null;
+    }
+
+    /* This is for the functionality when a button has been clicked
+
+     */
+
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+        Button button = findViewById(R.id.translateButton);
+        button.setText(TranslateLangs.get(pos).translateButtonLabel);
+
+
+        Romanji = TranslateLangs.get(pos).Romanji;
+        English = TranslateLangs.get(pos).English;
+
+    }
+
+
+}
+

@@ -1,0 +1,136 @@
+package ca.camosun.converter;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+import ca.camosun.converter.Converters;
+
+/**
+ * A fragment representing a single Item detail screen.
+ * This fragment is either contained in a {@link ItemListActivity}
+ * in two-pane mode (on tablets) or a {@link ItemDetailActivity}
+ * on handsets.
+ */
+public class ItemDetailFragment extends Fragment implements OnClickListener {
+
+    // Messages for various states of program.
+    public final String hintText = "Enter a value";
+    public final String notApplicableText = "N/A";
+    public final String errorMessage = "An error occurred.";
+
+    /**
+     * The fragment argument representing the item ID that this fragment
+     * represents.
+     */
+    public static final String ARG_ITEM_ID = "item_id";
+
+    /**
+     * The converters content this fragment is presenting.
+     */
+    private Converters.ConverterItem mItem;
+ 
+ /**
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
+     */
+    
+    EditText dataInputField;
+    Button leftBtn;
+    Button rightBtn;
+
+    public ItemDetailFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments().containsKey(ARG_ITEM_ID)) {
+            // Load the converters content specified by the fragment
+            // arguments. In a real-world scenario, use a Loader
+            // to load content from a content provider.
+            mItem = Converters.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+
+            Activity activity = this.getActivity();
+            CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
+            if (appBarLayout != null) {
+                appBarLayout.setTitle(mItem.getUnitName());
+            }
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.item_detail, container, false);
+
+        // Show the converters content as text in a TextView.
+        //  if (mItem != null) {
+        //      ((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem.getUnitName());
+        //  }
+
+
+        // Show converters main text box input field
+        dataInputField = (EditText) rootView.findViewById(R.id.dataInputField);
+        dataInputField.setHint(hintText);
+
+        // Show left button and label
+        leftBtn = (Button) rootView.findViewById(R.id.leftBtn);
+        leftBtn.setText(mItem.getLeftBtnLbl());
+        leftBtn.setOnClickListener(this);
+
+        // Show right button and label
+        rightBtn = (Button) rootView.findViewById(R.id.rightBtn);
+        rightBtn.setText(mItem.getRightBtnLbl());
+        rightBtn.setOnClickListener(this);
+
+        return rootView;
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        /**
+         * Check to see whether user selected the left or right button for a conversion, if so
+         * calculate that button's lambda expression result.
+         */
+        String userEnteredValue = dataInputField.getText().toString();
+        int lBtn = leftBtn.getId();
+        int rBtn = rightBtn.getId();
+        int selected = view.getId();
+
+        if (selected == (lBtn)) {
+            try {
+                if (mItem.leftConversion != null) {
+                    dataInputField.setText(String.format("%.3f", mItem.leftConversion.itemToConvert(Double.parseDouble(userEnteredValue))));
+                }
+            } catch (Exception e) {
+                dataInputField.setText(notApplicableText);
+            }
+            dataInputField.setSelection(dataInputField.getText().length());
+        }
+        else if (selected == rBtn) {
+            try {
+                if (mItem.rightConversion != null) {
+                    dataInputField.setText(String.format("%.3f", mItem.rightConversion.itemToConvert(Double.parseDouble(userEnteredValue))));
+                }
+            } catch (Exception e) {
+                dataInputField.setText(notApplicableText);
+            }
+            dataInputField.setSelection(dataInputField.getText().length());
+        }
+        else {
+            dataInputField.setText(errorMessage);
+        }
+    }
+}
+
+
+

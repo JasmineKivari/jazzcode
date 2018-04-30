@@ -1,0 +1,92 @@
+package ca.camosun.converter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by Tim Evoy on 2018-03-31.
+ */
+
+public class Converters {
+
+    /**
+     * Lambda expression for unit conversions on left and right button.
+     */
+    protected interface ConversionResult {
+        Double itemToConvert(Double input);
+    }
+
+    /**
+     * A converter item representing a unit of measure.
+     */
+    public class ConverterItem {
+        public String id;
+        public String unitName;
+        public String leftBtnLbl;
+        public String rightBtnLbl;
+        public ConversionResult leftConversion;
+        public ConversionResult rightConversion;
+
+        // Initialize converter item properties.
+        public ConverterItem(String id, String unitName, String leftBtnLbl, String rightBtnLbl,
+                             ConversionResult leftConversion, ConversionResult rightConversion) {
+            this.id = id;
+            this.unitName = unitName;
+            this.leftBtnLbl = leftBtnLbl;
+            this.rightBtnLbl = rightBtnLbl;
+            this.leftConversion = leftConversion;
+            this.rightConversion = rightConversion;
+        }
+
+        // GETTER for unit name.
+        public String getUnitName() {
+            return unitName;
+        }
+
+        // GETTER for left button label.
+        public String getLeftBtnLbl() {
+            return leftBtnLbl;
+        }
+
+        // GETTER for right button label.
+        public String getRightBtnLbl() {
+            return rightBtnLbl;
+        }
+
+        @Override
+        public String toString() {
+            return id;
+        }
+    }
+
+    // An array of sample converter items.
+    public static final List<ConverterItem> ITEMS = new ArrayList<ConverterItem>();
+
+    // A map of sample converter items by ID.
+    public static final Map<String, ConverterItem> ITEM_MAP = new HashMap<String, ConverterItem>();
+
+    // Add converter item and its id.
+    private static void addItem(ConverterItem item) {
+        ITEMS.add(item);
+        ITEM_MAP.put(item.id, item);
+    }
+
+    // Initialize each converter unit's data to display.
+    public void createConverterItems() {
+        addItem(new ConverterItem("1", "Area", "Ac -> Ha", "Ha -> Ac", (Double acres) -> acres * 0.404686, (Double hectares) -> hectares * 2.47105));
+        addItem(new ConverterItem("2", "Length", "Ft -> Mtr", "Mtr -> Ft", (Double feet) -> feet * 0.3048, (Double meters) -> meters * 3.28084));
+        addItem(new ConverterItem("3", "Temperature", "Cº -> Fº", "Fº -> Cº", (Double celsius) -> celsius * 9.0 / 5.0 + 32.0, (Double fahrenheit) -> (fahrenheit - 32.0) * 5.0 / 9.0));
+        addItem(new ConverterItem("4", "Weight", "Lb -> Kg", "Kg -> Lb", (Double pounds) -> pounds * 0.453592, (Double kilograms) -> kilograms * 2.20462));
+    }
+
+//    private static String makeDetails(int position) {
+//        StringBuilder builder = new StringBuilder();
+//        builder.append("Details about Item: ").append(position);
+//        for (int i = 0; i < position; i++) {
+//            builder.append("\nMore details information here.");
+//        }
+//        return builder.toString();
+//    }
+}
