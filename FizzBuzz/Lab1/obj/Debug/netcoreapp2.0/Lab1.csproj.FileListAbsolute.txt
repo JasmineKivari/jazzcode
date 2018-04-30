@@ -1,0 +1,11 @@
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\bin\Debug\netcoreapp2.0\Lab1.deps.json
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\bin\Debug\netcoreapp2.0\Lab1.runtimeconfig.json
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\bin\Debug\netcoreapp2.0\Lab1.runtimeconfig.dev.json
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\bin\Debug\netcoreapp2.0\Lab1.dll
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\bin\Debug\netcoreapp2.0\Lab1.pdb
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\obj\Debug\netcoreapp2.0\Lab1.csproj.CoreCompileInputs.cache
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\obj\Debug\netcoreapp2.0\Lab1.AssemblyInfoInputs.cache
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\obj\Debug\netcoreapp2.0\Lab1.AssemblyInfo.cs
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\obj\Debug\netcoreapp2.0\Lab1.dll
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\obj\Debug\netcoreapp2.0\Lab1.pdb
+C:\Users\Jazz\Documents\Year2\ics221\Lab1\Lab1\obj\Debug\netcoreapp2.0\Lab1.csprojResolveAssemblyReference.cache
