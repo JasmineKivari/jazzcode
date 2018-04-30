@@ -1,0 +1,19 @@
+if state == 3:
+	
+		text = ("ICS 200 HTML CONVERT COMPLETE")
+		previous = ""
+		upcominginfo = ""
+		test= ""
+		while text not in (test + previous + upcominginfo):
+		
+			upcominginfo = s2.recv(1024).decode("utf-8")
+			ending = (test + previous + upcominginfo).upper().find(text)
+		
+			if ending >= 0:
+				print(test + previous + upcominginfo [:ending], end = "")
+			
+			
+			if not ending >= 0:
+				test = previous
+				previous = upcominginfo
+				print(previous, end = "")

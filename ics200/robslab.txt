@@ -1,0 +1,82 @@
+import socket
+import sys
+
+s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+url = sys.argv[1].split('/')
+
+resource = '/' + url[3] + '/' + url[4]
+host = url[2]
+request = 'GET /%s HTTP/1.1\r\nhost: %s\r\n\r\n' % (resource, host)
+
+
+html2textHost = 'rtvm.cs.camosun.bc.ca'
+
+s1.connect( (host, 80) )
+s1.send(request.encode('UTF-8'))
+
+
+
+# # navigate HTTP protocol until the resource is about to be transferred
+
+s2.connect( (html2textHost, 10010) )
+ready = s2.recv(1024).decode('UTF-8')
+
+# # navigate the html2text protocol until the server is expecting bytes of
+# # HTML code.
+
+# # now start reading and writing.
+
+#- read in headers from web server, basically ignoring, looking for <HTML>.
+#- when <HTML> is read, move to state = 2
+state = 1
+previousBlock = ''
+currentBlock = ''
+
+while state != 4:
+	if state == 1:
+		currentBlock = s1.recv(1024).decode('UTF-8')	
+		start = (previousBlock + currentBlock).upper().find('<HTML>') 
+		if start >= 0:	
+			state = 2
+		else:
+			previousBlock = currentBlock
+			
+			
+	# - read in block from web server, and sending to html2text server
+	# - when </HTML> is read, move to state = 3		
+  	
+	if state == 2:
+		if '</HTML>' in (previousBlock + currentBlock):
+			end = (previousBlock + currentBlock).upper().find('</HTML>')
+			s2.send(currentBlock[start:end+7 - len(previousBlock)].encode('UTF-8'))
+			state = 3
+		else:
+			s2.send(currentBlock[start:].encode('UTF-8'))
+			previousBlock = currentBlock
+			currentBlock = s1.recv(1024).decode('UTF-8')
+			start = 0
+
+	# - receive from html2text server, printing received block as you go.
+	# - when ICS 200 HTML CONVERT COMPLETE is received, move to state = 4	
+	
+	if state == 3:
+		message = 'ICS 200 HTML CONVERT COMPLETE'
+		before = ''
+		incoming = ''
+		while message not in (before + incoming):
+			incoming = s2.recv(1024).decode('UTF-8')
+			ending = (before + incoming).upper().find(message)
+			if ending >= 0:
+				print(incoming[:ending - ], end = '')
+			else:
+				print(incoming, end = '')
+				before = incoming
+		state = 4	    
+				
+s1.close()
+s2.close()
+
+# Finish up
+# - print any remaining output blocks

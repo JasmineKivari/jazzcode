@@ -1,0 +1,84 @@
+import socket
+import sys
+
+s1= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s2= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+url= sys.argv[1].split("/")
+resource = "/" + url[3] + "/" + url[4]
+host= url[2]
+request= "GET %s HTTP/1.1\r\nhost: %s\r\n\r\n" %(resource, host)
+
+s1.connect( (host, 80) )
+s1.send(request.encode("utf-8"))
+#html= s1.recv(1024).decode("utf-8")
+html2textHost = "rtvm.cs.camosun.bc.ca"
+#print (html)
+
+
+# navigate HTTP protocol until the resource is about to be transferred
+
+s2.connect( (html2textHost, 10010) )
+#s2.send(request.encode("utf-8"))
+status= s2.recv(1024).decode("utf-8")
+print (status)
+	
+
+# navigate the html2text protocol until the server is expecting bytes of
+# HTML code.
+
+# now start reading and writing.
+state = 1
+while state != 4:
+	if state == 1:
+		html= s1.recv(1024).decode("utf-8")
+		beginning= html.upper().find("<HTML>")
+		
+		ending = html.upper().find("</HTML>") + 7
+		#print("\nthis is the html \n" + html + "\nthis is html from beginning to end\n" + html[beginning:ending])
+		if beginning and ending:
+			test= s2.send(html[beginning:ending].encode())
+			state=3
+		state = 2
+	
+	if state == 2:
+		#output for test 2
+		html2= s1.recv(1024).decode()
+		#print("\nthis is what I got back\n" + test2)
+		ending = html2.upper().find("</HTML>") + 7
+		if ending:
+			#print("\n I am in this if package\n")
+			package = html + html2
+			test= s2.send(package[beginning:ending].encode())
+			#print("\n found the ending\n" + str(test))
+			state= 3
+		else:
+			#print("\n I am in the else packet\n")
+			html3 = html2
+			htm2=s1.recv(1024).decode()
+			html4 = html3 + html2
+			ending = html4.upper().find("</HTML>") + 7
+			if ending:
+				print("\n I am in the newpacket\n")
+				newpacket= s2.send(html4[begining:ending].encode())
+				state=3
+		state = 3  #state 2
+		
+	
+	if state == 3:
+	#outout for test3
+		#print("\n found my way into state 3\n")
+		test3 = s2.recv(1024).decode()
+		#print ("\nthis is from test 3\n" + test3)
+		#test4= test2 + test3
+		#print(test3)
+		
+		removehtml= test3.find("ICS 200 HTML CONVERT COMPLETE")
+		#print ("\nto remove the ics 200\n" + str(removehtml))
+		print (test3[:removehtml])
+		
+		s1.close()
+		s2.close()
+		state =4
+
+		
