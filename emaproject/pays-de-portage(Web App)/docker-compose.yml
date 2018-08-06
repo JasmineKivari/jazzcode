@@ -1,0 +1,26 @@
+--- 
+services: 
+  db: 
+    environment:
+      - MONGO_INITDB_DATABASE=pays-de-portage
+    volumes:
+      - ./mongo-seed:/docker-entrypoint-initdb.d
+    container_name: mongo
+    image: "mongo:3.4.10"
+  node: 
+    build: ./node
+    command: "nodemon -L"
+    container_name: node
+    environment: 
+      - NODE_ENV=development
+      - DEBUG=pays-de-portage,express:*
+    image: pays-de-portage
+    links: 
+      - db
+    ports: 
+      - "3000:3000"
+    user: node
+    volumes: 
+      - "./app:/home/node/app"
+    working_dir: /home/node/app
+version: "3"
