@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% block content %}
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script src="https://highcharts.github.io/export-csv/export-csv.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<div class="container">
+<div class="row">
+   {% if user.is_authenticated %}
+   {% else %}
+   <p>Welcome, new user. Please log in.</p>
+   {% endif %}
+</div>
+</head>
+<style>
+   .dashboard{
+   font-family: 'Questrial', sans-serif;  
+   text-align: center;
+   }
+   .button{
+    display: inline-block;
+    background-color: #fff;
+    border-radius: 5px;
+    position: relative;
+    font-size: 18px;
+    color: #2f7692;
+    height: 100%;
+    text-align: left
+   }
+   .dropdown{
+    width: 300px;
+    display: inline-block;
+    background-color: #fff;
+    border-radius: 5px;
+    position: relative;
+    font-size: 18px;
+    color: #2f7692;
+    height: 100%;
+    text-align: left
+   }
+   .top {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    }
+    body { padding-top: 70px;}
+    @media screen and (max-width: 768px) {
+        body { padding-top: 0px; }
+    }
+    #weekSection, {
+      height: 100%;
+      padding-top: 40px;
+    }
+    #monthSection{
+      height: 100%;
+      padding-top: 70px;
+    }
+    #threeSection{
+      height: 100%;
+      padding-top: 70px;
+    }
+    #allSection{
+      height: 100%;
+      padding-top: 70px;
+    }
+    #monthButton{
+      background-color: 
+    }
+</style>
+<body>
+  <p>
+  <!-- The Main Dashboard Page -->
+  <!-- Last 7 Days Chart -->
+    <div id="top2"> </div>
+      <div class="dashboard" id="weekSection">
+        <br>
+        <div class="jumbotron">
+         <h2>Rooof's Employee Morale - The Last 7 Days</h2>
+         <br>
+		 <a href="#monthSection">
+		 <button type="button" id="monthButton" class="btn btn-info">Last 30 Days</button>
+		 </a>
+		 <a href="#threeSection">
+		 <button type="button" id="threeButton" class="btn btn-info">Last 3 Months</button>
+		 </a>
+		 <a href="#allSection">
+		 <button type="button" id="allButton"class="btn btn-info">All Data</button>
+		 </a>
+		 <br><br>
+		 <section id="week" class="section" data-url="{% url 'week' %}">
+         <div id="container" ></div>
+		 </section>
+         <script type="text/javascript">
+            $.ajax({
+              url: $("#week").attr("data-url"),
+              dataType: 'json',
+              success: function (data) {
+                Highcharts.chart('week', data);
+              }
+            });
+         </script>
+       </div>
+      <br>
+
+       <!-- Last 30 Days Chart -->
+
+      <div class="dashboard" id="monthSection">
+        <br>
+        <div class="jumbotron">
+         <h2>Rooof's Employee Morale - The Last 30 Days</h2>
+         <br>
+     <a href="#weekSection">
+     <button type="button" class="btn btn-info">Last 7 Days</button>
+     </a>
+     <a href="#threeSection">
+     <button type="button" class="btn btn-info">Last 3 Months</button>
+     </a>
+     <a href="#allSection">
+     <button type="button" class="btn btn-info">All Data</button>
+     </a>
+     <br><br>
+     <div id="month" data-url="{% url 'month' %}">
+         <div id="container" ></div>
+     </section>
+         <script type="text/javascript">
+            $.ajax({
+              url: $("#month").attr("data-url"),
+              dataType: 'json',
+              success: function (data) {
+                Highcharts.chart('month', data);
+              }
+            });
+         </script>
+       </div>
+     </div>
+      <br>
+
+
+      <!-- Last 3 Months Chart -->
+
+      <div class="dashboard" id="threeSection">
+        <div class="jumbotron">
+         <h2>Rooof's Employee Morale - The Last 3 Months</h2>
+         <br>
+     <a href="#weekSection">
+     <button type="button" class="btn btn-info">Last 7 Days</button>
+     </a>
+     <a href="#monthSection">
+     <button type="button" class="btn btn-info">Last 30 Days</button>
+     </a>
+     <a href="#allSection">
+     <button type="button" class="btn btn-info">All Data</button>
+     </a>
+     <br><br>
+     <div id="three" data-url="{% url 'three' %}">
+         <div id="container" ></div>
+     </section>
+         <script type="text/javascript">
+            $.ajax({
+              url: $("#three").attr("data-url"),
+              dataType: 'json',
+              success: function (data) {
+                Highcharts.chart('three', data);
+              }
+            });
+         </script>
+       </div>
+     </div>
+      <br>
+
+    <!-- All Data Chart -->
+
+      <div class="dashboard" id="allSection">
+        <div class="jumbotron">
+         <h2>Rooof's Employee Morale - All Data</h2>
+         <br>
+     <a href="#weekSection">
+     <button type="button" class="btn btn-info">Last 7 Days</button>
+     </a>
+     <a href="#monthSection">
+     <button type="button" class="btn btn-info">Last 30 Days</button>
+     </a>
+     <a href="#threeSection">
+     <button type="button" class="btn btn-info">Last 3 Months</button>
+     </a>
+     <br><br>
+     <div id="all" data-url="{% url 'all' %}">
+         <div id="container" ></div>
+     </section>
+         <script type="text/javascript">
+            $.ajax({
+              url: $("#all").attr("data-url"),
+              dataType: 'json',
+              success: function (data) {
+                Highcharts.chart('all', data);
+              }
+            });
+         </script>
+       </div>
+     </div>
+      <br>
+
+		 <a href="#top2">
+		 <button type="button" class="top btn btn-info">Top</button>
+		 </a>
+         </p>
+</body>
+</div>
+</div>
+{% endblock %}

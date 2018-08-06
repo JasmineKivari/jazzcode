@@ -1,0 +1,66 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>EMA</title>
+      <!-- Core CSS - Include with every page -->
+      <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+      <!-- Core Scripts - Include with every page -->
+      <script src = "{% static 'js/jquery.min.js' %}"></script>
+      <script src = "{% static 'js/bootstrap.min.js' %}"></script>
+      <!-- Core Font - Include with every page -->
+      <link href="https://fonts.googleapis.com/css?family=Questrial" rel="stylesheet">
+      <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+   </head>
+   <style>
+      .navbar-default {
+      background-color: #2f7692;
+      color: #f0e251;
+      }
+      .navbar-left > img{
+      max-height: 40px;
+      }
+      .navbar-brand{
+      padding-left:30px;
+      padding-right:30px;
+      font-family: 'Questrial', sans-serif;
+      font-size: 150%;  
+      }
+      .navbar-right{
+      font-family: 'Questrial', sans-serif;  
+      font-size: 150%;
+      }
+   </style>
+   <body>
+      <!-- Navigation Bar - Include with every page -->
+      <nav class="navbar navbar-default navbar-fixed-top">
+         <div class="container-fluid">
+            <div class="navbar-header">
+               <a href="/" class="navbar-left"><img src="{% static 'images/Rooof.png' %}"> <br> </a>
+               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+               <span class="sr-only">Toggle navigation</span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+               </button>
+               <a class="navbar-brand" href="/">Employee Morale Application</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+               <ul class="nav navbar-nav navbar-right">
+                  <li><a href="/admin">Admin</a></li>
+                  <li class="divider"></li>
+                  <li><a href="/logout">Logout</a></li>
+               </ul>
+               </li>
+               </ul>
+            </div>
+         </div>
+      </nav>
+      {% block content %}
+      {% endblock %}
+      {% block javascript %}
+      {% endblock %}
+   </body>
+</html>
