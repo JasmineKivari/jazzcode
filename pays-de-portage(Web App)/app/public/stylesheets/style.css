@@ -1,0 +1,25 @@
+
+
+@import url('https://fonts.googleapis.com/css?family=Fjalla+One|Muli');
+
+
+h1 {
+    font-family: 'Muli', sans-serif;
+    font-family: 'Fjalla One', sans-serif;
+    color: white;
+}
+
+body {
+    padding-bottom: 40px;
+    background-image: url("/images/lake-at-night-wallpaper-3.jpg")
+    
+}
+
+p {
+   color: white;
+}
+
+h4{
+    color: white;
+}
+
